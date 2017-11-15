@@ -1,12 +1,13 @@
 {
   "name": "puppeteer-cli",
   "version": "1.0.0",
-  "description": "A general command-line wrapper for puppeteer",
+  "description": "A general command-line wrapper for puppeteer. Currently only supports one command—`print`—to render a local HTML file to PDF.",
   "bin": {
     "puppeteer": "./index.js"
   },
   "author": "Chris Alfano <chris@jarv.us>",
   "license": "MIT",
+  "repository": "JarvusInnovations/puppeteer-cli",
   "dependencies": {
     "file-url": "^2.0.2",
     "puppeteer": "^0.13.0",
