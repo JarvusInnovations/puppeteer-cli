@@ -25,6 +25,10 @@ const argv = require('yargs')
             },
             format: {
                 default: 'Letter'
+            },
+            landscape: {
+                boolean: true,
+                default: false
             }
         },
         handler: async argv => {
@@ -52,6 +56,7 @@ async function print(argv) {
     await page.pdf({
         path: argv.output,
         format: argv.format,
+        landscape: argv.landscape,
         printBackground: argv.background,
         margin: {
             top: argv.marginTop,
