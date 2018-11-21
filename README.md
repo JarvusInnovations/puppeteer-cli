@@ -18,6 +18,7 @@ Options:
   --marginBottom                                            [default: "14.11mm"]
   --marginLeft                                               [default: "6.25mm"]
   --format                                                   [default: "Letter"]
+  --landscape                                         [boolean] [default: false]
 ```
 
 ## Example
