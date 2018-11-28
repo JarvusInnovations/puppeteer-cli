@@ -1,6 +1,6 @@
 # puppeteer-cli
 
-A general command-line wrapper for [puppeteer](https://github.com/GoogleChrome/puppeteer). Currently only supports one command—`print`—to render a local HTML file to PDF.
+A general command-line wrapper for puppeteer. Currently only supports one command—`print`—to render a local/or remote HTML file to PDF. Aims to be a easy replacement for the deprecated wkhtmltopdf.
 
 ## Usage
 
