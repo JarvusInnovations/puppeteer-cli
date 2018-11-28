@@ -10,7 +10,9 @@
   "repository": "JarvusInnovations/puppeteer-cli",
   "dependencies": {
     "file-url": "^2.0.2",
+    "is-url": "^1.2.4",
     "puppeteer": "^0.13.0",
+    "url-parse": "^1.4.4",
     "yargs": "^10.0.3"
   }
 }

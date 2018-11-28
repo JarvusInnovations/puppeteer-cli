@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
 const puppeteer = require('puppeteer');
+const parseUrl = require('url-parse');
 const fileUrl = require('file-url');
+const isUrl = require('is-url');
 
 const argv = require('yargs')
     .command({
@@ -47,10 +49,10 @@ const argv = require('yargs')
 async function print(argv) {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
-    const url = fileUrl(argv.input);
+    const url = isUrl(argv.input) ? parseUrl(argv.input).toString() : fileUrl(argv.input);
 
     console.log(`Loading ${url}`);
-    await page.goto(fileUrl(argv.input));
+    await page.goto(url);
 
     console.log(`Writing ${argv.output}`);
     await page.pdf({

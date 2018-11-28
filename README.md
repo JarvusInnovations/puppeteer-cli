@@ -23,15 +23,16 @@ Options:
 
 ## Example
 
-```
+``` shell
 npm install -g puppeteer-cli
 echo "<h1>Hello world!</h1>" > mypage.html
-puppeteer print mypage.html myprint.pdf
+puppeteer print mypage.html myprint.pdf # local file
+puppeteer print https://github.com/JarvusInnovations/puppeteer-cli puppeteer-cli.pdf # url
 ```
 
 ## Roadmap
 
 - [X] Add `print` command
-- [ ] Add support for `http://` inputs in addition to local file paths
+- [X] Add support for `http://` inputs in addition to local file paths
 - [ ] Add `screenshot` command
 - [ ] Detect `.json` or `.js` files as input to `screenshot` command instead of a single HTML file or URL, specifying a set of screenshots to capture in series
