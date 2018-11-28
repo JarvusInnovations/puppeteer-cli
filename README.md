@@ -34,5 +34,6 @@ puppeteer print https://github.com/JarvusInnovations/puppeteer-cli puppeteer-cli
 
 - [X] Add `print` command
 - [X] Add support for `http://` inputs in addition to local file paths
+- [ ] Add compatibility with `wkhtmltopdf` parameters to provide a drop-in replacement?
 - [ ] Add `screenshot` command
 - [ ] Detect `.json` or `.js` files as input to `screenshot` command instead of a single HTML file or URL, specifying a set of screenshots to capture in series
