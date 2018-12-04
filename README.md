@@ -4,22 +4,33 @@ A general command-line wrapper for puppeteer. Currently only supports one comman
 
 ## Usage
 
-```
+```bash
 puppeteer print <input> <output>
-puppeteer screenshot <input> <output>
 
-Print an html file to pdf
+Print an HTML file or URL to PDF
 
 Options:
-  --version       Show version number                                  [boolean]
-  --help          Show help                                            [boolean]
-  --background                                                   [default: true]
-  --marginTop                                                [default: "6.25mm"]
-  --marginRight                                              [default: "6.25mm"]
-  --marginBottom                                            [default: "14.11mm"]
-  --marginLeft                                               [default: "6.25mm"]
+  --version        Show version number                                 [boolean]
+  --help           Show help                                           [boolean]
+  --background                                         [boolean] [default: true]
+  --margin-top                                               [default: "6.25mm"]
+  --margin-right                                             [default: "6.25mm"]
+  --margin-bottom                                           [default: "14.11mm"]
+  --margin-left                                              [default: "6.25mm"]
   --format                                                   [default: "Letter"]
   --landscape                                         [boolean] [default: false]
+```
+
+```bash
+puppeteer screenshot <input> <output>
+
+Take screenshot of an HTML file or URL to PNG
+
+Options:
+  --version          Show version number                               [boolean]
+  --help             Show help                                         [boolean]
+  --full-page                                          [boolean] [default: true]
+  --omit-background                                   [boolean] [default: false]
 ```
 
 ## Example

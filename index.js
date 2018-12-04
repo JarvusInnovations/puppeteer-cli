@@ -8,21 +8,22 @@ const isUrl = require('is-url');
 const argv = require('yargs')
     .command({
         command: 'print <input> <output>',
-        desc: 'Print an html file to pdf',
+        desc: 'Print an HTML file or URL to PDF',
         builder: {
             background: {
+                boolean: true,
                 default: true
             },
-            marginTop: {
+            'margin-top': {
                 default: '6.25mm'
             },
-            marginRight: {
+            'margin-right': {
                 default: '6.25mm'
             },
-            marginBottom: {
+            'margin-bottom': {
                 default: '14.11mm'
             },
-            marginLeft: {
+            'margin-left': {
                 default: '6.25mm'
             },
             format: {
@@ -47,7 +48,7 @@ const argv = require('yargs')
         }
     }).command({
         command: 'screenshot <input> <output>',
-        desc: 'Take screenshot of an html file',
+        desc: 'Take screenshot of an HTML file or URL to PNG',
         builder: {
             'full-page': {
                 boolean: true,
