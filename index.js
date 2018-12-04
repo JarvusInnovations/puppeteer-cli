@@ -28,6 +28,10 @@ const argv = require('yargs')
             format: {
                 default: 'Letter'
             },
+            timeout: {
+                default: 30 * 1000,
+                number: true,
+            },
             landscape: {
                 boolean: true,
                 default: false
@@ -52,7 +56,9 @@ async function print(argv) {
     const url = isUrl(argv.input) ? parseUrl(argv.input).toString() : fileUrl(argv.input);
 
     console.log(`Loading ${url}`);
-    await page.goto(url);
+    await page.goto(url, {
+        timeout: argv.timeout
+    });
 
     console.log(`Writing ${argv.output}`);
     await page.pdf({
