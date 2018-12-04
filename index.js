@@ -45,6 +45,17 @@ const argv = require('yargs')
                 process.exit(1);
             }
         }
+    }).command({
+        command: 'screenshot <input> <output>',
+        desc: 'Take screenshot of an html file',
+        handler: async argv => {
+            try {
+                await screenshot(argv);
+            } catch (err) {
+                console.error('Failed to take screenshot:', err);
+                process.exit(1);
+            }
+        }
     })
     .demandCommand()
     .help()
@@ -72,6 +83,23 @@ async function print(argv) {
             bottom: argv.marginBottom,
             left: argv.marginLeft
         }
+    });
+
+    console.log('Done');
+    await browser.close();
+}
+
+async function screenshot(argv) {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    const url = isUrl(argv.input) ? parseUrl(argv.input).toString() : fileUrl(argv.input);
+
+    console.log(`Loading ${url}`);
+    await page.goto(url);
+
+    console.log(`Writing ${argv.output}`);
+    await page.screenshot({
+        path: argv.output
     });
 
     console.log('Done');

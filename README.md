@@ -6,6 +6,7 @@ A general command-line wrapper for puppeteer. Currently only supports one comman
 
 ```
 puppeteer print <input> <output>
+puppeteer screenshot <input> <output>
 
 Print an html file to pdf
 
@@ -28,12 +29,14 @@ npm install -g puppeteer-cli
 echo "<h1>Hello world!</h1>" > mypage.html
 puppeteer print mypage.html myprint.pdf # local file
 puppeteer print https://github.com/JarvusInnovations/puppeteer-cli puppeteer-cli.pdf # url
+puppeteer screenshot mypage.html myscreenshot.png # local file
+puppeteer screenshot http://jarv.us myscreenshot.png # url
 ```
 
 ## Roadmap
 
 - [X] Add `print` command
 - [X] Add support for `http://` inputs in addition to local file paths
+- [X] Add `screenshot` command
 - [ ] Add compatibility with `wkhtmltopdf` parameters to provide a drop-in replacement?
-- [ ] Add `screenshot` command
 - [ ] Detect `.json` or `.js` files as input to `screenshot` command instead of a single HTML file or URL, specifying a set of screenshots to capture in series
