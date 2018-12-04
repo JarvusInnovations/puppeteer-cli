@@ -92,9 +92,9 @@ async function screenshot(argv) {
     await page.goto(url);
 
     console.log(`Writing ${argv.output}`);
-	await page.screenshot({
-			path: argv.output
-	});
+    await page.screenshot({
+        path: argv.output
+    });
 
     console.log('Done');
     await browser.close();
