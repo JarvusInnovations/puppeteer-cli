@@ -48,6 +48,16 @@ const argv = require('yargs')
     }).command({
         command: 'screenshot <input> <output>',
         desc: 'Take screenshot of an html file',
+        builder: {
+            'full-page': {
+                boolean: true,
+                default: true
+            },
+            'omit-background': {
+                boolean: true,
+                default: false
+            }
+        },
         handler: async argv => {
             try {
                 await screenshot(argv);
@@ -99,7 +109,9 @@ async function screenshot(argv) {
 
     console.log(`Writing ${argv.output}`);
     await page.screenshot({
-        path: argv.output
+        path: argv.output,
+        fullPage: argv.fullPage,
+        omitBackground: argv.omitBackground
     });
 
     console.log('Done');
