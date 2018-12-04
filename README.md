@@ -41,7 +41,7 @@ echo "<h1>Hello world!</h1>" > mypage.html
 puppeteer print mypage.html myprint.pdf # local file
 puppeteer print https://github.com/JarvusInnovations/puppeteer-cli puppeteer-cli.pdf # url
 puppeteer screenshot mypage.html myscreenshot.png # local file
-puppeteer screenshot http://jarv.us myscreenshot.png # url
+puppeteer screenshot https://jarv.us myscreenshot.png # url
 ```
 
 ## Roadmap
