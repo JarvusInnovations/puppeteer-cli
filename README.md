@@ -1,4 +1,4 @@
-# puppeteer-cli
+# puppeteer-v-cli
 
 A general command-line wrapper for puppeteer. Currently only supports one command—`print`—to render a local/or remote HTML file to PDF. Aims to be a easy replacement for the deprecated wkhtmltopdf.
 
@@ -7,7 +7,7 @@ It is copycat of `puppeteer-cli`. Just support viewport option. (when original a
 ## Usage
 
 ```bash
-puppeteer print <input> <output>
+puppeteer-v print <input> <output>
 
 Print an HTML file or URL to PDF. If viewport-width > 0 and viewport-height > 0, then set viewport size.
 
@@ -27,7 +27,7 @@ Options:
 ```
 
 ```bash
-puppeteer screenshot <input> <output>
+puppeteer-v screenshot <input> <output>
 
 Take screenshot of an HTML file or URL to PNG
 
@@ -41,13 +41,13 @@ Options:
 ## Example
 
 ``` shell
-npm install -g puppeteer-cli
+npm install -g https://github.com/fingul/puppeteer-cli
 echo "<h1>Hello world!</h1>" > mypage.html
-puppeteer print mypage.html myprint.pdf # local file
-puppeteer print https://github.com/JarvusInnovations/puppeteer-cli puppeteer-cli.pdf # url
-puppeteer screenshot mypage.html myscreenshot.png # local file
-puppeteer screenshot https://jarv.us myscreenshot.png # url
-puppeteer screenshot https://jarv.us myscreenshot.png --viewport-width 100 --viewport-height 100 
+puppeteer-v print mypage.html myprint.pdf # local file
+puppeteer-v print https://github.com/JarvusInnovations/puppeteer-cli puppeteer-cli.pdf # url
+puppeteer-v screenshot mypage.html myscreenshot.png # local file
+puppeteer-v screenshot https://jarv.us myscreenshot.png # url
+puppeteer-v screenshot https://jarv.us myscreenshot.png --viewport-width 100 --viewport-height 100 
 ```
 
 ## Roadmap
