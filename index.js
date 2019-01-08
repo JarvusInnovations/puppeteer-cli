@@ -130,10 +130,6 @@ async function screenshot(argv) {
     const page = await browser.newPage();
     await _setViewPort(page, argv);
 
-    //MODIFY-BEGIN
-    // await page.setViewport({width:1920, height:1080})
-    //MODIFY-DONE
-
     const url = isUrl(argv.input) ? parseUrl(argv.input).toString() : fileUrl(argv.input);
 
     console.log(`Loading ${url}`);
