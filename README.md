@@ -41,7 +41,7 @@ Options:
 ## Example
 
 ``` shell
-npm install -g https://github.com/fingul/puppeteer-cli
+npm install -g puppeteer-v-cli
 echo "<h1>Hello world!</h1>" > mypage.html
 puppeteer-v print mypage.html myprint.pdf # local file
 puppeteer-v print https://github.com/JarvusInnovations/puppeteer-cli puppeteer-cli.pdf # url
