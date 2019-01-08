@@ -36,6 +36,14 @@ const argv = require('yargs')
             landscape: {
                 boolean: true,
                 default: false
+            },
+            'viewport-width': {
+                default: 0,
+                number: true
+            },
+            'viewport-height': {
+                default: 0,
+                number: true
             }
         },
         handler: async argv => {
@@ -72,9 +80,26 @@ const argv = require('yargs')
     .help()
     .argv;
 
+async function _setViewPort(page, argv) {
+    const w = argv.viewportWidth;
+    const h = argv.viewportHeight;
+
+    if ((w && !h) || (!w && h)) {
+        console.error(`Config Error : viewportWidth and viewportHeight must be set or not set same-ly. viewportWidth=${w}|viewportHeight=${h}`);
+        process.exit(1)
+    }
+
+    if (w && h) {
+        console.log(`page.setViewport({width: ${w}, height: ${h}})`);
+        await page.setViewport({width: w, height: h})
+    }
+}
+
+
 async function print(argv) {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
+    await _setViewPort(page, argv);
     const url = isUrl(argv.input) ? parseUrl(argv.input).toString() : fileUrl(argv.input);
 
     console.log(`Loading ${url}`);
@@ -103,6 +128,12 @@ async function print(argv) {
 async function screenshot(argv) {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
+    await _setViewPort(page, argv);
+
+    //MODIFY-BEGIN
+    // await page.setViewport({width:1920, height:1080})
+    //MODIFY-DONE
+
     const url = isUrl(argv.input) ? parseUrl(argv.input).toString() : fileUrl(argv.input);
 
     console.log(`Loading ${url}`);
