@@ -19,6 +19,7 @@ Options:
   --margin-left                                              [default: "6.25mm"]
   --format                                                   [default: "Letter"]
   --landscape                                         [boolean] [default: false]
+  --headless                                          [boolean] [default: false]
 ```
 
 ```bash
@@ -31,6 +32,7 @@ Options:
   --help             Show help                                         [boolean]
   --full-page                                          [boolean] [default: true]
   --omit-background                                   [boolean] [default: false]
+  --headless                                          [boolean] [default: false]
 ```
 
 ## Example
