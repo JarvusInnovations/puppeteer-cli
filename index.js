@@ -46,6 +46,10 @@ const argv = require('yargs')
                 boolean: true,
                 default: false
             },
+            sandbox: {
+                boolean: true,
+                default: true
+            },
             headless: {
                 boolean: true,
                 default: false
@@ -74,6 +78,10 @@ const argv = require('yargs')
                 boolean: true,
                 default: false
             },
+            sandbox: {
+                boolean: true,
+                default: true
+            },
             headless: {
                 boolean: true,
                 default: false
@@ -94,7 +102,8 @@ const argv = require('yargs')
     .argv;
 
 async function print(argv) {
-    const browser = await puppeteer.launch();
+    const launchArgs = buildLaunchArgs(argv);
+    const browser = await puppeteer.launch(launchArgs);
     const page = await browser.newPage();
     const url = isUrl(argv.input) ? parseUrl(argv.input).toString() : fileUrl(argv.input);
 
@@ -126,7 +135,8 @@ async function print(argv) {
 }
 
 async function screenshot(argv) {
-    const browser = await puppeteer.launch();
+    const launchArgs = buildLaunchArgs(argv);
+    const browser = await puppeteer.launch(launchArgs);
     const page = await browser.newPage();
     const url = isUrl(argv.input) ? parseUrl(argv.input).toString() : fileUrl(argv.input);
 
@@ -142,4 +152,12 @@ async function screenshot(argv) {
 
     logger.log('Done');
     await browser.close();
+}
+
+function buildLaunchArgs(argv) {
+    const launchArgs = { args: [] };
+    if(argv.sandbox === false) {
+        launchArgs.args.push('--no-sandbox', '--disable-setuid-sandbox');
+    }
+    return launchArgs;
 }

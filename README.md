@@ -19,6 +19,7 @@ Options:
   --margin-left                                              [default: "6.25mm"]
   --format                                                   [default: "Letter"]
   --landscape                                         [boolean] [default: false]
+  --sandbox                                            [boolean] [default: true]
   --headless                                          [boolean] [default: false]
 ```
 
@@ -32,6 +33,7 @@ Options:
   --help             Show help                                         [boolean]
   --full-page                                          [boolean] [default: true]
   --omit-background                                   [boolean] [default: false]
+  --sandbox                                            [boolean] [default: true]
   --headless                                          [boolean] [default: false]
 ```
 
