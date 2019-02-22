@@ -5,7 +5,7 @@ A general command-line wrapper for puppeteer. Currently only supports one comman
 ## Usage
 
 ```bash
-puppeteer print <input> <output>
+puppeteer print <input> [<output>]
 
 Print an HTML file or URL to PDF
 

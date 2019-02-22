@@ -7,7 +7,7 @@ const isUrl = require('is-url');
 
 const argv = require('yargs')
     .command({
-        command: 'print <input> <output>',
+        command: 'print <input> [<output>]',
         desc: 'Print an HTML file or URL to PDF',
         builder: {
             background: {
@@ -40,6 +40,8 @@ const argv = require('yargs')
         },
         handler: async argv => {
             try {
+                // If output falsey make it null
+                argv.output = argv.output || null;   
                 await print(argv);
             } catch (err) {
                 console.error('Failed to generate pdf:', err);
@@ -83,7 +85,7 @@ async function print(argv) {
     });
 
     console.log(`Writing ${argv.output}`);
-    await page.pdf({
+    const buffer = await page.pdf({
         path: argv.output,
         format: argv.format,
         landscape: argv.landscape,
@@ -95,6 +97,10 @@ async function print(argv) {
             left: argv.marginLeft
         }
     });
+
+    if (argv.output == null) {
+        await process.stdout.write(buffer)
+    }
 
     console.log('Done');
     await browser.close();
