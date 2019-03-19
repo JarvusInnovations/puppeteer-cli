@@ -53,6 +53,10 @@ const argv = require('yargs')
             headless: {
                 boolean: true,
                 default: false
+            },
+            'wait-until': {
+                string: true,
+                default: ''
             }
         },
         handler: async argv => {
@@ -85,6 +89,10 @@ const argv = require('yargs')
             headless: {
                 boolean: true,
                 default: false
+            },
+            'wait-until': {
+                string: true,
+                default: ''
             }
         },
         handler: async argv => {
@@ -106,11 +114,10 @@ async function print(argv) {
     const browser = await puppeteer.launch(launchArgs);
     const page = await browser.newPage();
     const url = isUrl(argv.input) ? parseUrl(argv.input).toString() : fileUrl(argv.input);
+    const navArgs = buildNavigationArgs(argv);
 
     logger.log(`Loading ${url}`);
-    await page.goto(url, {
-        timeout: argv.timeout
-    });
+    await page.goto(url, navArgs);
 
     logger.log(`Writing ${argv.output}`);
     const buffer = await page.pdf({
@@ -139,9 +146,10 @@ async function screenshot(argv) {
     const browser = await puppeteer.launch(launchArgs);
     const page = await browser.newPage();
     const url = isUrl(argv.input) ? parseUrl(argv.input).toString() : fileUrl(argv.input);
+    const navArgs = buildNavigationArgs(argv);
 
     logger.log(`Loading ${url}`);
-    await page.goto(url);
+    await page.goto(url, navArgs);
 
     logger.log(`Writing ${argv.output}`);
     await page.screenshot({
@@ -159,5 +167,19 @@ function buildLaunchArgs(argv) {
     if(argv.sandbox === false) {
         launchArgs.args.push('--no-sandbox', '--disable-setuid-sandbox');
     }
+    if(argv.waitUntil){
+        launchArgs.waitUntil = argv.waitUntil;
+    }
     return launchArgs;
+}
+
+function buildNavigationArgs(argv) {
+    const navArgs = {};
+    if(argv.timeout) {
+        navArgs.timeout = argv.timeout;
+    }
+    if(argv.waitUntil) {
+        navArgs.waitUntil = argv.waitUntil;
+    }
+    return navArgs;
 }
