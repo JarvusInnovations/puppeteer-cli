@@ -57,6 +57,10 @@ const argv = require('yargs')
             'omit-background': {
                 boolean: true,
                 default: false
+            },
+            'viewport': {
+                describe: 'Set viewport to a given size, e.g. 800x600',
+                type: 'string'
             }
         },
         handler: async argv => {
@@ -104,6 +108,22 @@ async function screenshot(argv) {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     const url = isUrl(argv.input) ? parseUrl(argv.input).toString() : fileUrl(argv.input);
+
+    if (argv.viewport) {
+        const formatMatch = argv.viewport.match(/^(?<width>\d+)[xX](?<height>\d+)$/);
+
+        if (!formatMatch) {
+            console.error('Option --viewport must be in the format ###x### e.g. 800x600');
+            process.exit(1);
+        }
+
+        const { width, height } = formatMatch.groups;
+        console.log(`Setting viewport to ${width}x${height}`);
+        await page.setViewport({
+            width: parseInt(width),
+            height: parseInt(height)
+        });
+    }
 
     console.log(`Loading ${url}`);
     await page.goto(url);

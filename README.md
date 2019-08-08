@@ -18,6 +18,7 @@ Options:
   --margin-bottom                                           [default: "14.11mm"]
   --margin-left                                              [default: "6.25mm"]
   --format                                                   [default: "Letter"]
+  --timeout                                            [number] [default: 30000]
   --landscape                                         [boolean] [default: false]
 ```
 
@@ -31,6 +32,7 @@ Options:
   --help             Show help                                         [boolean]
   --full-page                                          [boolean] [default: true]
   --omit-background                                   [boolean] [default: false]
+  --viewport         Set viewport to a given size, e.g. 800x600         [string]
 ```
 
 ## Example
@@ -42,6 +44,7 @@ puppeteer print mypage.html myprint.pdf # local file
 puppeteer print https://github.com/JarvusInnovations/puppeteer-cli puppeteer-cli.pdf # url
 puppeteer screenshot mypage.html myscreenshot.png # local file
 puppeteer screenshot https://jarv.us myscreenshot.png # url
+puppeteer screenshot https://jarv.us myscreenshot.png --viewport 300x200
 ```
 
 ## Roadmap
