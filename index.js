@@ -90,7 +90,7 @@ async function _setViewPort(page, argv) {
     }
 
     if (w && h) {
-        console.log(`page.setViewport({width: ${w}, height: ${h}})`);
+        console.log('Setting viewport to ${viewportWidth}x${viewportHeight}');
         await page.setViewport({width: w, height: h})
     }
 }
