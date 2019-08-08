@@ -1,4 +1,4 @@
-# puppeteer-v-cli
+# puppeteer-cli
 
 A general command-line wrapper for puppeteer. Currently only supports one command—`print`—to render a local/or remote HTML file to PDF. Aims to be a easy replacement for the deprecated wkhtmltopdf.
 
@@ -7,7 +7,7 @@ It is copycat of `puppeteer-cli`. Just support viewport option. (when original a
 ## Usage
 
 ```bash
-puppeteer-v print <input> <output>
+puppeteer print <input> <output>
 
 Print an HTML file or URL to PDF. If viewport-width > 0 and viewport-height > 0, then set viewport size.
 
@@ -43,11 +43,11 @@ Options:
 ``` shell
 npm install -g puppeteer-v-cli
 echo "<h1>Hello world!</h1>" > mypage.html
-puppeteer-v print mypage.html myprint.pdf # local file
-puppeteer-v print https://github.com/JarvusInnovations/puppeteer-cli puppeteer-cli.pdf # url
-puppeteer-v screenshot mypage.html myscreenshot.png # local file
-puppeteer-v screenshot https://jarv.us myscreenshot.png # url
-puppeteer-v screenshot https://jarv.us myscreenshot.png --viewport-width 100 --viewport-height 100 
+puppeteer print mypage.html myprint.pdf # local file
+puppeteer print https://github.com/JarvusInnovations/puppeteer-cli puppeteer-cli.pdf # url
+puppeteer screenshot mypage.html myscreenshot.png # local file
+puppeteer screenshot https://jarv.us myscreenshot.png # url
+puppeteer screenshot https://jarv.us myscreenshot.png --viewport-width 100 --viewport-height 100
 ```
 
 ## Roadmap
