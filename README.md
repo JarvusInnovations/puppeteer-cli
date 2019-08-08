@@ -36,6 +36,7 @@ Options:
   --help             Show help                                         [boolean]
   --full-page                                          [boolean] [default: true]
   --omit-background                                   [boolean] [default: false]
+  --viewport         Set viewport to a given size, e.g. 800x600         [string]
 ```
 
 ## Example
@@ -47,7 +48,7 @@ puppeteer print mypage.html myprint.pdf # local file
 puppeteer print https://github.com/JarvusInnovations/puppeteer-cli puppeteer-cli.pdf # url
 puppeteer screenshot mypage.html myscreenshot.png # local file
 puppeteer screenshot https://jarv.us myscreenshot.png # url
-puppeteer screenshot https://jarv.us myscreenshot.png --viewport-width 100 --viewport-height 100
+puppeteer screenshot https://jarv.us myscreenshot.png --viewport 300x200
 ```
 
 ## Roadmap

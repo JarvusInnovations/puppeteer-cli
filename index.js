@@ -36,14 +36,6 @@ const argv = require('yargs')
             landscape: {
                 boolean: true,
                 default: false
-            },
-            'viewport-width': {
-                default: 0,
-                number: true
-            },
-            'viewport-height': {
-                default: 0,
-                number: true
             }
         },
         handler: async argv => {
@@ -65,6 +57,10 @@ const argv = require('yargs')
             'omit-background': {
                 boolean: true,
                 default: false
+            },
+            'viewport': {
+                describe: 'Set viewport to a given size, e.g. 800x600',
+                type: 'string'
             }
         },
         handler: async argv => {
@@ -80,26 +76,10 @@ const argv = require('yargs')
     .help()
     .argv;
 
-async function _setViewPort(page, argv) {
-    const w = argv.viewportWidth;
-    const h = argv.viewportHeight;
-
-    if ((w && !h) || (!w && h)) {
-        console.error(`Config Error : viewportWidth and viewportHeight must be set or not set same-ly. viewportWidth=${w}|viewportHeight=${h}`);
-        process.exit(1)
-    }
-
-    if (w && h) {
-        console.log('Setting viewport to ${viewportWidth}x${viewportHeight}');
-        await page.setViewport({width: w, height: h})
-    }
-}
-
 
 async function print(argv) {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
-    await _setViewPort(page, argv);
     const url = isUrl(argv.input) ? parseUrl(argv.input).toString() : fileUrl(argv.input);
 
     console.log(`Loading ${url}`);
@@ -128,9 +108,23 @@ async function print(argv) {
 async function screenshot(argv) {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
-    await _setViewPort(page, argv);
-
     const url = isUrl(argv.input) ? parseUrl(argv.input).toString() : fileUrl(argv.input);
+
+    if (argv.viewport) {
+        const formatMatch = argv.viewport.match(/^(?<width>\d+)[xX](?<height>\d+)$/);
+
+        if (!formatMatch) {
+            console.error('Option --viewport must be in the format ###x### e.g. 800x600');
+            process.exit(1);
+        }
+
+        const { width, height } = formatMatch.groups;
+        console.log(`Setting viewport to ${width}x${height}`);
+        await page.setViewport({
+            width: parseInt(width),
+            height: parseInt(height)
+        });
+    }
 
     console.log(`Loading ${url}`);
     await page.goto(url);
