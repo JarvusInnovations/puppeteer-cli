@@ -11,8 +11,8 @@
   "dependencies": {
     "file-url": "^3.0.0",
     "is-url": "^1.2.4",
-    "puppeteer": "^1.15.0",
+    "puppeteer": "^1.19.0",
     "url-parse": "^1.4.7",
-    "yargs": "^13.2.2"
+    "yargs": "^13.3.0"
   }
 }
