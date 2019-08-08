@@ -76,7 +76,6 @@ const argv = require('yargs')
     .help()
     .argv;
 
-
 async function print(argv) {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();

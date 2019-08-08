@@ -2,15 +2,12 @@
 
 A general command-line wrapper for puppeteer. Currently only supports one command—`print`—to render a local/or remote HTML file to PDF. Aims to be a easy replacement for the deprecated wkhtmltopdf.
 
-It is copycat of `puppeteer-cli`. Just support viewport option. (when original app support this feature, it will be deprecated.)
-
 ## Usage
 
 ```bash
 puppeteer print <input> <output>
 
-Print an HTML file or URL to PDF. If viewport-width > 0 and viewport-height > 0, then set viewport size.
-
+Print an HTML file or URL to PDF
 
 Options:
   --version        Show version number                                 [boolean]
@@ -21,13 +18,12 @@ Options:
   --margin-bottom                                           [default: "14.11mm"]
   --margin-left                                              [default: "6.25mm"]
   --format                                                   [default: "Letter"]
+  --timeout                                            [number] [default: 30000]
   --landscape                                         [boolean] [default: false]
-  --viewport-width                                    [number] [default: 0]
-  --viewport-height                                    [number] [default: 0]
 ```
 
 ```bash
-puppeteer-v screenshot <input> <output>
+puppeteer screenshot <input> <output>
 
 Take screenshot of an HTML file or URL to PNG
 
@@ -42,7 +38,7 @@ Options:
 ## Example
 
 ``` shell
-npm install -g puppeteer-v-cli
+npm install -g puppeteer-cli
 echo "<h1>Hello world!</h1>" > mypage.html
 puppeteer print mypage.html myprint.pdf # local file
 puppeteer print https://github.com/JarvusInnovations/puppeteer-cli puppeteer-cli.pdf # url
