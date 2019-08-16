@@ -5,9 +5,18 @@ const parseUrl = require('url-parse');
 const fileUrl = require('file-url');
 const isUrl = require('is-url');
 
+let headless = false;
+
+const logger = {};
+logger.log = function (message, ...optionalParams) {
+    if (!headless) {
+        console.log.apply(null, arguments);
+    }
+}
+
 const argv = require('yargs')
     .command({
-        command: 'print <input> <output>',
+        command: 'print <input> [<output>]',
         desc: 'Print an HTML file or URL to PDF',
         builder: {
             background: {
@@ -46,10 +55,25 @@ const argv = require('yargs')
             },
             footerTemplate: {
                 default: ''
+            },
+            sandbox: {
+                boolean: true,
+                default: true
+            },
+            headless: {
+                boolean: true,
+                default: false
+            },
+            'wait-until': {
+                string: true,
+                default: ''
             }
         },
         handler: async argv => {
             try {
+                // If output falsey make it null
+                argv.output = argv.output || null;
+                headless = argv.headless;
                 await print(argv);
             } catch (err) {
                 console.error('Failed to generate pdf:', err);
@@ -71,10 +95,23 @@ const argv = require('yargs')
             'viewport': {
                 describe: 'Set viewport to a given size, e.g. 800x600',
                 type: 'string'
+            },
+            sandbox: {
+                boolean: true,
+                default: true
+            },
+            headless: {
+                boolean: true,
+                default: false
+            },
+            'wait-until': {
+                string: true,
+                default: ''
             }
         },
         handler: async argv => {
             try {
+                headless = argv.headless;
                 await screenshot(argv);
             } catch (err) {
                 console.error('Failed to take screenshot:', err);
@@ -87,9 +124,11 @@ const argv = require('yargs')
     .argv;
 
 async function print(argv) {
-    const browser = await puppeteer.launch();
+    const launchArgs = buildLaunchArgs(argv);
+    const browser = await puppeteer.launch(launchArgs);
     const page = await browser.newPage();
     const url = isUrl(argv.input) ? parseUrl(argv.input).toString() : fileUrl(argv.input);
+    const navArgs = buildNavigationArgs(argv);
 
     if (argv.cookie) {
         function splitCookie(colonSeparated) {
@@ -110,14 +149,11 @@ async function print(argv) {
         await page.setCookie(...cookies);
     }
 
-    console.log(`Loading ${url}`);
-    await page.goto(url, {
-        timeout: argv.timeout,
-        waitUntil: 'networkidle0'
-    });
+    logger.log(`Loading ${url}`);
+    await page.goto(url, navArgs);
 
-    console.log(`Writing ${argv.output}`);
-    await page.pdf({
+    logger.log(`Writing ${argv.output}`);
+    const buffer = await page.pdf({
         path: argv.output,
         format: argv.format,
         landscape: argv.landscape,
@@ -133,44 +169,55 @@ async function print(argv) {
         }
     });
 
-    console.log('Done');
+    if (argv.output == null) {
+        await process.stdout.write(buffer)
+    }
+
+    logger.log('Done');
     await browser.close();
 }
 
 async function screenshot(argv) {
-    const browser = await puppeteer.launch();
+    const launchArgs = buildLaunchArgs(argv);
+    const browser = await puppeteer.launch(launchArgs);
     const page = await browser.newPage();
     const url = isUrl(argv.input) ? parseUrl(argv.input).toString() : fileUrl(argv.input);
+    const navArgs = buildNavigationArgs(argv);
 
-    if (argv.viewport) {
-        const formatMatch = argv.viewport.match(/^(?<width>\d+)[xX](?<height>\d+)$/);
+    logger.log(`Loading ${url}`);
+    await page.goto(url, navArgs);
 
-        if (!formatMatch) {
-            console.error('Option --viewport must be in the format ###x### e.g. 800x600');
-            process.exit(1);
-        }
-
-        const {
-            width,
-            height
-        } = formatMatch.groups;
-        console.log(`Setting viewport to ${width}x${height}`);
-        await page.setViewport({
-            width: parseInt(width),
-            height: parseInt(height)
-        });
-    }
-
-    console.log(`Loading ${url}`);
-    await page.goto(url);
-
-    console.log(`Writing ${argv.output}`);
+    logger.log(`Writing ${argv.output}`);
     await page.screenshot({
         path: argv.output,
         fullPage: argv.fullPage,
         omitBackground: argv.omitBackground
     });
 
-    console.log('Done');
+    logger.log('Done');
     await browser.close();
+}
+
+function buildLaunchArgs(argv) {
+    const launchArgs = {
+        args: []
+    };
+    if (argv.sandbox === false) {
+        launchArgs.args.push('--no-sandbox', '--disable-setuid-sandbox');
+    }
+    if (argv.waitUntil) {
+        launchArgs.waitUntil = argv.waitUntil;
+    }
+    return launchArgs;
+}
+
+function buildNavigationArgs(argv) {
+    const navArgs = {};
+    if (argv.timeout) {
+        navArgs.timeout = argv.timeout;
+    }
+    if (argv.waitUntil) {
+        navArgs.waitUntil = argv.waitUntil;
+    }
+    return navArgs;
 }

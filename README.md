@@ -5,7 +5,7 @@ A general command-line wrapper for puppeteer. Currently only supports one comman
 ## Usage
 
 ```bash
-puppeteer print <input> <output>
+puppeteer print <input> [<output>]
 
 Print an HTML file or URL to PDF
 
@@ -24,6 +24,8 @@ Options:
   --displayHeaderFooter                               [boolean] [default: false]
   --headerTemplate                                                      [string]
   --footerTemplate                                                      [string]
+  --sandbox                                            [boolean] [default: true]
+  --headless                                          [boolean] [default: false]
 ```
 
 ```bash
@@ -37,6 +39,8 @@ Options:
   --full-page                                          [boolean] [default: true]
   --omit-background                                   [boolean] [default: false]
   --viewport         Set viewport to a given size, e.g. 800x600         [string]
+  --sandbox                                            [boolean] [default: true]
+  --headless                                          [boolean] [default: false]
 ```
 
 ## Example
