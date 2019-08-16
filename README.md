@@ -20,6 +20,10 @@ Options:
   --format                                                   [default: "Letter"]
   --timeout                                            [number] [default: 30000]
   --landscape                                         [boolean] [default: false]
+  --cookie                                                              [string]
+  --displayHeaderFooter                               [boolean] [default: false]
+  --headerTemplate                                                      [string]
+  --footerTemplate                                                      [string]
 ```
 
 ```bash

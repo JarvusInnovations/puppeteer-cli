@@ -36,6 +36,16 @@ const argv = require('yargs')
             landscape: {
                 boolean: true,
                 default: false
+            },
+            displayHeaderFooter: {
+                boolean: true,
+                default: false
+            },
+            headerTemplate: {
+                default: ''
+            },
+            footerTemplate: {
+                default: ''
             }
         },
         handler: async argv => {
@@ -81,9 +91,29 @@ async function print(argv) {
     const page = await browser.newPage();
     const url = isUrl(argv.input) ? parseUrl(argv.input).toString() : fileUrl(argv.input);
 
+    if (argv.cookie) {
+        function splitCookie(colonSeparated) {
+            const kvs = colonSeparated.split(':');
+            return {
+                'url': url,
+                'name': kvs[0],
+                'value': kvs[1]
+            }
+        }
+
+        var cookies = [];
+        if (Array.isArray(argv.cookie)) {
+            cookies = argv.cookie.map(splitCookie);
+        } else {
+            cookies = [splitCookie(argv.cookie)];
+        }
+        await page.setCookie(...cookies);
+    }
+
     console.log(`Loading ${url}`);
     await page.goto(url, {
-        timeout: argv.timeout
+        timeout: argv.timeout,
+        waitUntil: 'networkidle0'
     });
 
     console.log(`Writing ${argv.output}`);
@@ -92,6 +122,9 @@ async function print(argv) {
         format: argv.format,
         landscape: argv.landscape,
         printBackground: argv.background,
+        displayHeaderFooter: argv.displayHeaderFooter,
+        headerTemplate: argv.headerTemplate,
+        footerTemplate: argv.footerTemplate,
         margin: {
             top: argv.marginTop,
             right: argv.marginRight,
@@ -117,7 +150,10 @@ async function screenshot(argv) {
             process.exit(1);
         }
 
-        const { width, height } = formatMatch.groups;
+        const {
+            width,
+            height
+        } = formatMatch.groups;
         console.log(`Setting viewport to ${width}x${height}`);
         await page.setViewport({
             width: parseInt(width),
