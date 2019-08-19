@@ -46,14 +46,14 @@ const argv = require('yargs')
                 boolean: true,
                 default: false
             },
-            displayHeaderFooter: {
+            'display-header-footer': {
                 boolean: true,
                 default: false
             },
-            headerTemplate: {
+            'header-template': {
                 default: ''
             },
-            footerTemplate: {
+            'footer-template': {
                 default: ''
             },
             sandbox: {
@@ -65,6 +65,10 @@ const argv = require('yargs')
                 default: false
             },
             'wait-until': {
+                string: true,
+                default: ''
+            },
+            'wait-for-function': {
                 string: true,
                 default: ''
             }
@@ -151,6 +155,10 @@ async function print(argv) {
 
     logger.log(`Loading ${url}`);
     await page.goto(url, navArgs);
+
+    if (argv.waitForFunction) {
+        await page.waitForFunction(argv.waitForFunction);
+    }
 
     logger.log(`Writing ${argv.output}`);
     const buffer = await page.pdf({
