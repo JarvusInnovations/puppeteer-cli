@@ -44,7 +44,6 @@ Options:
 ## Example
 
 ``` shell
-npm install -g puppeteer-cli
 echo "<h1>Hello world!</h1>" > mypage.html
 puppeteer print mypage.html myprint.pdf # local file
 puppeteer print https://github.com/JarvusInnovations/puppeteer-cli puppeteer-cli.pdf # url
