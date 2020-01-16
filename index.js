@@ -14,6 +14,10 @@ const commonOptions = {
     'timeout': {
         default: 30 * 1000,
         number: true,
+    },
+    'wait-until': {
+        string: true,
+        default: 'load'
     }
 };
 
@@ -167,8 +171,9 @@ function buildLaunchOptions({ sandbox }) {
     };
 }
 
-function buildNavigationOptions({ timeout }) {
+function buildNavigationOptions({ timeout, waitUntil }) {
     return {
-        timeout
+        timeout,
+        waitUntil
     };
 }
