@@ -5,11 +5,20 @@ const parseUrl = require('url-parse');
 const fileUrl = require('file-url');
 const isUrl = require('is-url');
 
+// common options for both print and screenshot commands
+const commonOptions = {
+    'sandbox': {
+        boolean: true,
+        default: true
+    }
+};
+
 const argv = require('yargs')
     .command({
         command: 'print <input> [output]',
         desc: 'Print an HTML file or URL to PDF',
         builder: {
+            ...commonOptions,
             'background': {
                 boolean: true,
                 default: true
@@ -50,6 +59,7 @@ const argv = require('yargs')
         command: 'screenshot <input> [output]',
         desc: 'Take screenshot of an HTML file or URL to PNG',
         builder: {
+            ...commonOptions,
             'full-page': {
                 boolean: true,
                 default: true
@@ -77,7 +87,7 @@ const argv = require('yargs')
     .argv;
 
 async function print(argv) {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch(buildLaunchOptions(argv));
     const page = await browser.newPage();
     const url = isUrl(argv.input) ? parseUrl(argv.input).toString() : fileUrl(argv.input);
 
@@ -109,7 +119,7 @@ async function print(argv) {
 }
 
 async function screenshot(argv) {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch(buildLaunchOptions(argv));
     const page = await browser.newPage();
     const url = isUrl(argv.input) ? parseUrl(argv.input).toString() : fileUrl(argv.input);
 
@@ -145,4 +155,16 @@ async function screenshot(argv) {
 
     console.error('Done');
     await browser.close();
+}
+
+function buildLaunchOptions({ sandbox }) {
+    const args = [];
+
+    if (sandbox === false) {
+        args.push('--no-sandbox', '--disable-setuid-sandbox');
+    }
+
+    return {
+        args
+    };
 }
