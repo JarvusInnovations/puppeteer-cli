@@ -7,7 +7,7 @@ const isUrl = require('is-url');
 
 const argv = require('yargs')
     .command({
-        command: 'print <input> <output>',
+        command: 'print <input> [output]',
         desc: 'Print an HTML file or URL to PDF',
         builder: {
             'background': {
@@ -47,7 +47,7 @@ const argv = require('yargs')
             }
         }
     }).command({
-        command: 'screenshot <input> <output>',
+        command: 'screenshot <input> [output]',
         desc: 'Take screenshot of an HTML file or URL to PNG',
         builder: {
             'full-page': {
@@ -86,9 +86,9 @@ async function print(argv) {
         timeout: argv.timeout
     });
 
-    console.error(`Writing ${argv.output}`);
-    await page.pdf({
-        path: argv.output,
+    console.error(`Writing ${argv.output || 'STDOUT'}`);
+    const buffer = await page.pdf({
+        path: argv.output || null,
         format: argv.format,
         landscape: argv.landscape,
         printBackground: argv.background,
@@ -99,6 +99,10 @@ async function print(argv) {
             left: argv.marginLeft
         }
     });
+
+    if (!argv.output) {
+        await process.stdout.write(buffer);
+    }
 
     console.error('Done');
     await browser.close();
@@ -128,12 +132,16 @@ async function screenshot(argv) {
     console.error(`Loading ${url}`);
     await page.goto(url);
 
-    console.error(`Writing ${argv.output}`);
-    await page.screenshot({
-        path: argv.output,
+    console.error(`Writing ${argv.output || 'STDOUT'}`);
+    const buffer = await page.screenshot({
+        path: argv.output || null,
         fullPage: argv.fullPage,
         omitBackground: argv.omitBackground
     });
+
+    if (!argv.output) {
+        await process.stdout.write(buffer);
+    }
 
     console.error('Done');
     await browser.close();
