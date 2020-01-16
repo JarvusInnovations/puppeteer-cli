@@ -1,6 +1,6 @@
 {
   "name": "puppeteer-cli",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "A command-line wrapper for generating PDF prints and PNG screenshots with Puppeteer. Aims to be a easy replacement for the deprecated wkhtmltopdf.",
   "bin": {
     "puppeteer": "./index.js"
