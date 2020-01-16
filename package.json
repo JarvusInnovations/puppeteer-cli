@@ -1,7 +1,7 @@
 {
   "name": "puppeteer-cli",
-  "version": "1.4.1",
-  "description": "A general command-line wrapper for puppeteer. Currently only supports one command—`print`—to render a local HTML file to PDF.",
+  "version": "1.5.0",
+  "description": "A command-line wrapper for generating PDF prints and PNG screenshots with [Puppeteer](https://developers.google.com/web/tools/puppeteer). Aims to be a easy replacement for the deprecated wkhtmltopdf.",
   "bin": {
     "puppeteer": "./index.js"
   },
@@ -11,7 +11,7 @@
   "dependencies": {
     "file-url": "^3.0.0",
     "is-url": "^1.2.4",
-    "puppeteer": "^1.20.0",
+    "puppeteer": "^2.0.0",
     "url-parse": "^1.4.7",
     "yargs": "^13.3.0"
   }

@@ -5,12 +5,33 @@ const parseUrl = require('url-parse');
 const fileUrl = require('file-url');
 const isUrl = require('is-url');
 
+// common options for both print and screenshot commands
+const commonOptions = {
+    'sandbox': {
+        boolean: true,
+        default: true
+    },
+    'timeout': {
+        default: 30 * 1000,
+        number: true,
+    },
+    'wait-until': {
+        string: true,
+        default: 'load'
+    },
+    'cookie': {
+        describe: 'Set a cookie in the form "key:value". May be repeated for multiple cookies.',
+        type: 'string'
+    }
+};
+
 const argv = require('yargs')
     .command({
-        command: 'print <input> <output>',
+        command: 'print <url> [output]',
         desc: 'Print an HTML file or URL to PDF',
         builder: {
-            background: {
+            ...commonOptions,
+            'background': {
                 boolean: true,
                 default: true
             },
@@ -26,16 +47,24 @@ const argv = require('yargs')
             'margin-left': {
                 default: '6.25mm'
             },
-            format: {
+            'format': {
                 default: 'Letter'
             },
-            timeout: {
-                default: 30 * 1000,
-                number: true,
-            },
-            landscape: {
+            'landscape': {
                 boolean: true,
                 default: false
+            },
+            'display-header-footer': {
+                boolean: true,
+                default: false
+            },
+            'header-template': {
+                string: true,
+                default: ''
+            },
+            'footer-template': {
+                string: true,
+                default: ''
             }
         },
         handler: async argv => {
@@ -47,9 +76,10 @@ const argv = require('yargs')
             }
         }
     }).command({
-        command: 'screenshot <input> <output>',
+        command: 'screenshot <url> [output]',
         desc: 'Take screenshot of an HTML file or URL to PNG',
         builder: {
+            ...commonOptions,
             'full-page': {
                 boolean: true,
                 default: true
@@ -77,18 +107,21 @@ const argv = require('yargs')
     .argv;
 
 async function print(argv) {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch(buildLaunchOptions(argv));
     const page = await browser.newPage();
-    const url = isUrl(argv.input) ? parseUrl(argv.input).toString() : fileUrl(argv.input);
+    const url = isUrl(argv.url) ? parseUrl(argv.url).toString() : fileUrl(argv.url);
 
-    console.log(`Loading ${url}`);
-    await page.goto(url, {
-        timeout: argv.timeout
-    });
+    if (argv.cookie) {
+        console.error(`Setting cookies`);
+        await page.setCookie(...buildCookies(argv));
+    }
 
-    console.log(`Writing ${argv.output}`);
-    await page.pdf({
-        path: argv.output,
+    console.error(`Loading ${url}`);
+    await page.goto(url, buildNavigationOptions(argv));
+
+    console.error(`Writing ${argv.output || 'STDOUT'}`);
+    const buffer = await page.pdf({
+        path: argv.output || null,
         format: argv.format,
         landscape: argv.landscape,
         printBackground: argv.background,
@@ -97,17 +130,24 @@ async function print(argv) {
             right: argv.marginRight,
             bottom: argv.marginBottom,
             left: argv.marginLeft
-        }
+        },
+        displayHeaderFooter: argv.displayHeaderFooter,
+        headerTemplate: argv.headerTemplate,
+        footerTemplate: argv.footerTemplate
     });
 
-    console.log('Done');
+    if (!argv.output) {
+        await process.stdout.write(buffer);
+    }
+
+    console.error('Done');
     await browser.close();
 }
 
 async function screenshot(argv) {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch(buildLaunchOptions(argv));
     const page = await browser.newPage();
-    const url = isUrl(argv.input) ? parseUrl(argv.input).toString() : fileUrl(argv.input);
+    const url = isUrl(argv.url) ? parseUrl(argv.url).toString() : fileUrl(argv.url);
 
     if (argv.viewport) {
         const formatMatch = argv.viewport.match(/^(?<width>\d+)[xX](?<height>\d+)$/);
@@ -118,23 +158,65 @@ async function screenshot(argv) {
         }
 
         const { width, height } = formatMatch.groups;
-        console.log(`Setting viewport to ${width}x${height}`);
+        console.error(`Setting viewport to ${width}x${height}`);
         await page.setViewport({
             width: parseInt(width),
             height: parseInt(height)
         });
     }
 
-    console.log(`Loading ${url}`);
-    await page.goto(url);
+    if (argv.cookie) {
+        console.error(`Setting cookies`);
+        await page.setCookie(...buildCookies(argv));
+    }
 
-    console.log(`Writing ${argv.output}`);
-    await page.screenshot({
-        path: argv.output,
+    console.error(`Loading ${url}`);
+    await page.goto(url, buildNavigationOptions(argv));
+
+    console.error(`Writing ${argv.output || 'STDOUT'}`);
+    const buffer = await page.screenshot({
+        path: argv.output || null,
         fullPage: argv.fullPage,
         omitBackground: argv.omitBackground
     });
 
-    console.log('Done');
+    if (!argv.output) {
+        await process.stdout.write(buffer);
+    }
+
+    console.error('Done');
     await browser.close();
+}
+
+function buildLaunchOptions({ sandbox }) {
+    const args = [];
+
+    if (sandbox === false) {
+        args.push('--no-sandbox', '--disable-setuid-sandbox');
+    }
+
+    return {
+        args
+    };
+}
+
+function buildNavigationOptions({ timeout, waitUntil }) {
+    return {
+        timeout,
+        waitUntil
+    };
+}
+
+function buildCookies({ url, cookie }) {
+    return [...cookie].map(cookieString => {
+        const delimiterOffset = cookieString.indexOf(':');
+        if (delimiterOffset == -1) {
+            throw new Error('cookie must contain : delimiter');
+        }
+
+        const name = cookieString.substr(0, delimiterOffset);
+        const value = cookieString.substr(delimiterOffset + 1);
+
+        return { name, value, url };
+    });
 }
