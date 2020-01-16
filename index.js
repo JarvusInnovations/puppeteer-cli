@@ -10,6 +10,10 @@ const commonOptions = {
     'sandbox': {
         boolean: true,
         default: true
+    },
+    'timeout': {
+        default: 30 * 1000,
+        number: true,
     }
 };
 
@@ -37,10 +41,6 @@ const argv = require('yargs')
             },
             'format': {
                 default: 'Letter'
-            },
-            'timeout': {
-                default: 30 * 1000,
-                number: true,
             },
             'landscape': {
                 boolean: true,
@@ -92,9 +92,7 @@ async function print(argv) {
     const url = isUrl(argv.input) ? parseUrl(argv.input).toString() : fileUrl(argv.input);
 
     console.error(`Loading ${url}`);
-    await page.goto(url, {
-        timeout: argv.timeout
-    });
+    await page.goto(url, buildNavigationOptions(argv));
 
     console.error(`Writing ${argv.output || 'STDOUT'}`);
     const buffer = await page.pdf({
@@ -140,7 +138,7 @@ async function screenshot(argv) {
     }
 
     console.error(`Loading ${url}`);
-    await page.goto(url);
+    await page.goto(url, buildNavigationOptions(argv));
 
     console.error(`Writing ${argv.output || 'STDOUT'}`);
     const buffer = await page.screenshot({
@@ -166,5 +164,11 @@ function buildLaunchOptions({ sandbox }) {
 
     return {
         args
+    };
+}
+
+function buildNavigationOptions({ timeout }) {
+    return {
+        timeout
     };
 }
