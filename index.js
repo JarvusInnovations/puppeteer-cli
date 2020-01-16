@@ -49,6 +49,18 @@ const argv = require('yargs')
             'landscape': {
                 boolean: true,
                 default: false
+            },
+            'display-header-footer': {
+                boolean: true,
+                default: false
+            },
+            'header-template': {
+                string: true,
+                default: ''
+            },
+            'footer-template': {
+                string: true,
+                default: ''
             }
         },
         handler: async argv => {
@@ -109,7 +121,10 @@ async function print(argv) {
             right: argv.marginRight,
             bottom: argv.marginBottom,
             left: argv.marginLeft
-        }
+        },
+        displayHeaderFooter: argv.displayHeaderFooter,
+        headerTemplate: argv.headerTemplate,
+        footerTemplate: argv.footerTemplate
     });
 
     if (!argv.output) {
