@@ -81,12 +81,12 @@ async function print(argv) {
     const page = await browser.newPage();
     const url = isUrl(argv.input) ? parseUrl(argv.input).toString() : fileUrl(argv.input);
 
-    console.log(`Loading ${url}`);
+    console.error(`Loading ${url}`);
     await page.goto(url, {
         timeout: argv.timeout
     });
 
-    console.log(`Writing ${argv.output}`);
+    console.error(`Writing ${argv.output}`);
     await page.pdf({
         path: argv.output,
         format: argv.format,
@@ -100,7 +100,7 @@ async function print(argv) {
         }
     });
 
-    console.log('Done');
+    console.error('Done');
     await browser.close();
 }
 
@@ -118,23 +118,23 @@ async function screenshot(argv) {
         }
 
         const { width, height } = formatMatch.groups;
-        console.log(`Setting viewport to ${width}x${height}`);
+        console.error(`Setting viewport to ${width}x${height}`);
         await page.setViewport({
             width: parseInt(width),
             height: parseInt(height)
         });
     }
 
-    console.log(`Loading ${url}`);
+    console.error(`Loading ${url}`);
     await page.goto(url);
 
-    console.log(`Writing ${argv.output}`);
+    console.error(`Writing ${argv.output}`);
     await page.screenshot({
         path: argv.output,
         fullPage: argv.fullPage,
         omitBackground: argv.omitBackground
     });
 
-    console.log('Done');
+    console.error('Done');
     await browser.close();
 }
