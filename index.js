@@ -18,6 +18,10 @@ const commonOptions = {
     'wait-until': {
         string: true,
         default: 'load'
+    },
+    'cookie': {
+        describe: 'Set a cookie in the form "key:value". May be repeated for multiple cookies.',
+        type: 'string'
     }
 };
 
@@ -107,6 +111,11 @@ async function print(argv) {
     const page = await browser.newPage();
     const url = isUrl(argv.url) ? parseUrl(argv.url).toString() : fileUrl(argv.url);
 
+    if (argv.cookie) {
+        console.error(`Setting cookies`);
+        await page.setCookie(...buildCookies(argv));
+    }
+
     console.error(`Loading ${url}`);
     await page.goto(url, buildNavigationOptions(argv));
 
@@ -156,6 +165,11 @@ async function screenshot(argv) {
         });
     }
 
+    if (argv.cookie) {
+        console.error(`Setting cookies`);
+        await page.setCookie(...buildCookies(argv));
+    }
+
     console.error(`Loading ${url}`);
     await page.goto(url, buildNavigationOptions(argv));
 
@@ -191,4 +205,18 @@ function buildNavigationOptions({ timeout, waitUntil }) {
         timeout,
         waitUntil
     };
+}
+
+function buildCookies({ url, cookie }) {
+    return [...cookie].map(cookieString => {
+        const delimiterOffset = cookieString.indexOf(':');
+        if (delimiterOffset == -1) {
+            throw new Error('cookie must contain : delimiter');
+        }
+
+        const name = cookieString.substr(0, delimiterOffset);
+        const value = cookieString.substr(delimiterOffset + 1);
+
+        return { name, value, url };
+    });
 }
