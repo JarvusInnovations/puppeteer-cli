@@ -1,6 +1,6 @@
 {
   "name": "puppeteer-cli",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "A general command-line wrapper for puppeteer. Currently only supports one command—`print`—to render a local HTML file to PDF.",
   "bin": {
     "puppeteer": "./index.js"
