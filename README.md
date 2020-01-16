@@ -11,31 +11,43 @@ npm install -g puppeteer-cli
 ## Usage
 
 ```bash
-puppeteer print <input> <output>
+puppeteer print <url> [output]
 
 Print an HTML file or URL to PDF
 
 Options:
-  --version        Show version number                                 [boolean]
-  --help           Show help                                           [boolean]
+  --version                Show version number                         [boolean]
+  --help                   Show help                                   [boolean]
+  --sandbox                                            [boolean] [default: true]
+  --timeout                                            [number] [default: 30000]
+  --wait-until                                        [string] [default: "load"]
+  --cookie                 Set a cookie in the form "key:value". May be repeated
+                           for multiple cookies.                        [string]
   --background                                         [boolean] [default: true]
   --margin-top                                               [default: "6.25mm"]
   --margin-right                                             [default: "6.25mm"]
   --margin-bottom                                           [default: "14.11mm"]
   --margin-left                                              [default: "6.25mm"]
   --format                                                   [default: "Letter"]
-  --timeout                                            [number] [default: 30000]
   --landscape                                         [boolean] [default: false]
+  --display-header-footer                             [boolean] [default: false]
+  --header-template                                       [string] [default: ""]
+  --footer-template                                       [string] [default: ""]
 ```
 
 ```bash
-puppeteer screenshot <input> <output>
+puppeteer screenshot <url> [output]
 
 Take screenshot of an HTML file or URL to PNG
 
 Options:
   --version          Show version number                               [boolean]
   --help             Show help                                         [boolean]
+  --sandbox                                            [boolean] [default: true]
+  --timeout                                            [number] [default: 30000]
+  --wait-until                                        [string] [default: "load"]
+  --cookie           Set a cookie in the form "key:value". May be repeated for
+                     multiple cookies.                                  [string]
   --full-page                                          [boolean] [default: true]
   --omit-background                                   [boolean] [default: false]
   --viewport         Set viewport to a given size, e.g. 800x600         [string]
