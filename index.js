@@ -10,7 +10,7 @@ const argv = require('yargs')
         command: 'print <input> <output>',
         desc: 'Print an HTML file or URL to PDF',
         builder: {
-            background: {
+            'background': {
                 boolean: true,
                 default: true
             },
@@ -26,14 +26,14 @@ const argv = require('yargs')
             'margin-left': {
                 default: '6.25mm'
             },
-            format: {
+            'format': {
                 default: 'Letter'
             },
-            timeout: {
+            'timeout': {
                 default: 30 * 1000,
                 number: true,
             },
-            landscape: {
+            'landscape': {
                 boolean: true,
                 default: false
             }
