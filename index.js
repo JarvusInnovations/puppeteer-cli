@@ -23,7 +23,7 @@ const commonOptions = {
 
 const argv = require('yargs')
     .command({
-        command: 'print <input> [output]',
+        command: 'print <url> [output]',
         desc: 'Print an HTML file or URL to PDF',
         builder: {
             ...commonOptions,
@@ -72,7 +72,7 @@ const argv = require('yargs')
             }
         }
     }).command({
-        command: 'screenshot <input> [output]',
+        command: 'screenshot <url> [output]',
         desc: 'Take screenshot of an HTML file or URL to PNG',
         builder: {
             ...commonOptions,
@@ -105,7 +105,7 @@ const argv = require('yargs')
 async function print(argv) {
     const browser = await puppeteer.launch(buildLaunchOptions(argv));
     const page = await browser.newPage();
-    const url = isUrl(argv.input) ? parseUrl(argv.input).toString() : fileUrl(argv.input);
+    const url = isUrl(argv.url) ? parseUrl(argv.url).toString() : fileUrl(argv.url);
 
     console.error(`Loading ${url}`);
     await page.goto(url, buildNavigationOptions(argv));
@@ -138,7 +138,7 @@ async function print(argv) {
 async function screenshot(argv) {
     const browser = await puppeteer.launch(buildLaunchOptions(argv));
     const page = await browser.newPage();
-    const url = isUrl(argv.input) ? parseUrl(argv.input).toString() : fileUrl(argv.input);
+    const url = isUrl(argv.url) ? parseUrl(argv.url).toString() : fileUrl(argv.url);
 
     if (argv.viewport) {
         const formatMatch = argv.viewport.match(/^(?<width>\d+)[xX](?<height>\d+)$/);
