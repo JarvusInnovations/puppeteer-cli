@@ -2,6 +2,12 @@
 
 A general command-line wrapper for puppeteer. Currently only supports one command—`print`—to render a local/or remote HTML file to PDF. Aims to be a easy replacement for the deprecated wkhtmltopdf.
 
+## Install
+
+```bash
+npm install -g puppeteer-cli
+```
+
 ## Usage
 
 ```bash
@@ -38,7 +44,6 @@ Options:
 ## Example
 
 ``` shell
-npm install -g puppeteer-cli
 echo "<h1>Hello world!</h1>" > mypage.html
 puppeteer print mypage.html myprint.pdf # local file
 puppeteer print https://github.com/JarvusInnovations/puppeteer-cli puppeteer-cli.pdf # url
