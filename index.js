@@ -4,6 +4,7 @@ const puppeteer = require('puppeteer');
 const parseUrl = require('url-parse');
 const fileUrl = require('file-url');
 const isUrl = require('is-url');
+const fs = require('fs');
 
 // common options for both print and screenshot commands
 const commonOptions = {
@@ -31,6 +32,22 @@ const argv = require('yargs')
         desc: 'Print an HTML file or URL to PDF',
         builder: {
             ...commonOptions,
+            'emulatemedia': {
+                string: true,
+                default: ''
+            },
+            'injectjs': {
+                string: true,
+                default: ''
+            },
+            'magicformat': {
+                boolean: true,
+                default: false
+            },
+            'scale': {
+                number: true,
+                default: 1
+            },
             'background': {
                 boolean: true,
                 default: true
@@ -120,9 +137,25 @@ async function print(argv) {
     await page.goto(url, buildNavigationOptions(argv));
 
     console.error(`Writing ${argv.output || 'STDOUT'}`);
+
+    let height, width;
+    if (argv.magicformat) {
+        height = (await page.evaluate(
+            'Math.max(document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight)'));
+        width = '1366';
+        argv.format = undefined;
+    }
+
+    if (argv.injectjs) {
+        await page.evaluate(`(async () => {${fs.readFileSync(argv.injectjs)}})()`);
+    }
+
+    if (argv.emulatemedia) await page.emulateMedia(argv.emulatemedia);
     const buffer = await page.pdf({
         path: argv.output || null,
         format: argv.format,
+        width, height,
+        scale: argv.scale,
         landscape: argv.landscape,
         printBackground: argv.background,
         margin: {
