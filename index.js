@@ -32,17 +32,14 @@ const argv = require('yargs')
         desc: 'Print an HTML file or URL to PDF',
         builder: {
             ...commonOptions,
-            'emulatemedia': {
+            'emulate-media': {
+                string: true,
+                default: '',
+                description: 'Set "screen" to get screen design of website'
+            },
+            'inject-js': {
                 string: true,
                 default: ''
-            },
-            'injectjs': {
-                string: true,
-                default: ''
-            },
-            'magicformat': {
-                boolean: true,
-                default: false
             },
             'scale': {
                 number: true,
@@ -65,7 +62,8 @@ const argv = require('yargs')
                 default: '6.25mm'
             },
             'format': {
-                default: 'Letter'
+                default: 'Letter',
+                description: 'Set "auto", to create custom format based on website height.'
             },
             'landscape': {
                 boolean: true,
@@ -139,21 +137,22 @@ async function print(argv) {
     console.error(`Writing ${argv.output || 'STDOUT'}`);
 
     let height, width;
-    if (argv.magicformat) {
+    if (argv.format == 'auto') {
         height = (await page.evaluate(
             'Math.max(document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight)'));
         width = '1366';
-        argv.format = undefined;
     }
 
-    if (argv.injectjs) {
-        await page.evaluate(`(async () => {${fs.readFileSync(argv.injectjs)}})()`);
+    if (argv.injectJs) {
+        await page.evaluate(`(async () => {${fs.readFileSync(argv.injectJs)}})()`);
     }
 
-    if (argv.emulatemedia) await page.emulateMedia(argv.emulatemedia);
+    if (argv.emulateMedia) {
+        await page.emulateMedia(argv.emulateMedia);
+    }
     const buffer = await page.pdf({
         path: argv.output || null,
-        format: argv.format,
+        format: argv.format == 'auto' ? undefined : argv.format,
         width, height,
         scale: argv.scale,
         landscape: argv.landscape,
