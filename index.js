@@ -4,6 +4,7 @@ const puppeteer = require('puppeteer');
 const parseUrl = require('url-parse');
 const fileUrl = require('file-url');
 const isUrl = require('is-url');
+const fs = require('fs');
 
 // common options for both print and screenshot commands
 const commonOptions = {
@@ -31,6 +32,19 @@ const argv = require('yargs')
         desc: 'Print an HTML file or URL to PDF',
         builder: {
             ...commonOptions,
+            'emulate-media': {
+                string: true,
+                default: '',
+                description: 'Set "screen" to get screen design of website'
+            },
+            'inject-js': {
+                string: true,
+                default: ''
+            },
+            'scale': {
+                number: true,
+                default: 1
+            },
             'background': {
                 boolean: true,
                 default: true
@@ -48,7 +62,8 @@ const argv = require('yargs')
                 default: '6.25mm'
             },
             'format': {
-                default: 'Letter'
+                default: 'Letter',
+                description: 'Set "auto", to create custom format based on website height.'
             },
             'landscape': {
                 boolean: true,
@@ -120,9 +135,26 @@ async function print(argv) {
     await page.goto(url, buildNavigationOptions(argv));
 
     console.error(`Writing ${argv.output || 'STDOUT'}`);
+
+    let height, width;
+    if (argv.format == 'auto') {
+        height = (await page.evaluate(
+            'Math.max(document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight)'));
+        width = '1366';
+    }
+
+    if (argv.injectJs) {
+        await page.evaluate(`(async () => {${fs.readFileSync(argv.injectJs)}})()`);
+    }
+
+    if (argv.emulateMedia) {
+        await page.emulateMedia(argv.emulateMedia);
+    }
     const buffer = await page.pdf({
         path: argv.output || null,
-        format: argv.format,
+        format: argv.format == 'auto' ? undefined : argv.format,
+        width, height,
+        scale: argv.scale,
         landscape: argv.landscape,
         printBackground: argv.background,
         margin: {
