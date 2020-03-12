@@ -208,7 +208,7 @@ function buildNavigationOptions({ timeout, waitUntil }) {
 }
 
 function buildCookies({ url, cookie }) {
-    return [...cookie].map(cookieString => {
+    return [cookie].map(cookieString => {
         const delimiterOffset = cookieString.indexOf(':');
         if (delimiterOffset == -1) {
             throw new Error('cookie must contain : delimiter');
