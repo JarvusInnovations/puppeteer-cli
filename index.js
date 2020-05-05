@@ -4,12 +4,18 @@ const puppeteer = require('puppeteer');
 const parseUrl = require('url-parse');
 const fileUrl = require('file-url');
 const isUrl = require('is-url');
+const fs = require('fs');
+const NB_INSTANCES = 4;
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 // common options for both print and screenshot commands
 const commonOptions = {
     'sandbox': {
         boolean: true,
-        default: true
+        default: false
     },
     'timeout': {
         default: 30 * 1000,
@@ -26,6 +32,39 @@ const commonOptions = {
 };
 
 const argv = require('yargs')
+    .command({
+        command: 'bulk-print <batchFile>',
+        builder: {
+            ...commonOptions,
+            'background': {
+                boolean: true,
+                default: true
+            },
+            'margin-top': {
+                default: '6.25mm'
+            },
+            'margin-right': {
+                default: '6.25mm'
+            },
+            'margin-bottom': {
+                default: '14.11mm'
+            },
+            'margin-left': {
+                default: '6.25mm'
+            },
+            'format': {
+                default: 'A4'
+            },
+        },
+        handler: async argv => {
+            try {
+                await bulkPrint(argv);
+            } catch (err) {
+                console.log('Failed to generate pdf:', err);
+                process.exit(1);
+            }
+        }
+    })
     .command({
         command: 'print <url> [output]',
         desc: 'Print an HTML file or URL to PDF',
@@ -71,7 +110,7 @@ const argv = require('yargs')
             try {
                 await print(argv);
             } catch (err) {
-                console.error('Failed to generate pdf:', err);
+                console.log('Failed to generate pdf:', err);
                 process.exit(1);
             }
         }
@@ -106,6 +145,43 @@ const argv = require('yargs')
     .help()
     .argv;
 
+
+async function bulkPrint(argv) {
+    let rawdata = fs.readFileSync(argv.batchFile);
+    let config = JSON.parse(rawdata)["data"];
+
+    const browser = await puppeteer.launch(buildLaunchOptions(argv));
+    const page = await browser.newPage();
+    for (const pdf of config) {
+        const htmlFile = fileUrl(pdf["htmlFile"]);
+        const pdfFile = pdf["tmpPDFFile"];
+
+        console.error(`Loading ${htmlFile}`);
+        await page.goto(htmlFile, buildNavigationOptions(argv));
+
+        console.error(`Writing ${pdfFile}`);
+        const displayFooter = !!pdf["pdfObject"]["footerTemplate"];
+        const buffer = await page.pdf({
+            path: pdfFile,
+            format: argv.format,
+            landscape: pdf["pdfObject"]["isLandscape"],
+            printBackground: true,
+            margin: {
+                top: argv.marginTop,
+                right: argv.marginRight,
+                bottom: displayFooter ? pdf["pdfObject"]["footerHeight"] : argv.marginBottom,
+                left: argv.marginLeft
+            },
+            displayHeaderFooter: displayFooter,
+            footerTemplate: pdf["pdfObject"]["footerTemplate"].replace(new RegExp('\\\\\"', 'g'),'"')
+        });
+        await sleep(20);
+    }
+
+    console.error('Done');
+    await browser.close();
+}
+
 async function print(argv) {
     const browser = await puppeteer.launch(buildLaunchOptions(argv));
     const page = await browser.newPage();
@@ -120,6 +196,7 @@ async function print(argv) {
     await page.goto(url, buildNavigationOptions(argv));
 
     console.error(`Writing ${argv.output || 'STDOUT'}`);
+    console.error(argv.footerTemplate);
     const buffer = await page.pdf({
         path: argv.output || null,
         format: argv.format,
@@ -143,6 +220,8 @@ async function print(argv) {
     console.error('Done');
     await browser.close();
 }
+
+
 
 async function screenshot(argv) {
     const browser = await puppeteer.launch(buildLaunchOptions(argv));
