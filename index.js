@@ -65,6 +65,10 @@ const argv = require('yargs')
             'footer-template': {
                 string: true,
                 default: ''
+            },
+            'page-ranges': {
+                string: true,
+                default: ''
             }
         },
         handler: async argv => {
@@ -151,7 +155,8 @@ async function print(argv) {
         },
         displayHeaderFooter: argv.displayHeaderFooter,
         headerTemplate: argv.headerTemplate,
-        footerTemplate: argv.footerTemplate
+        footerTemplate: argv.footerTemplate,
+        pageRanges: argv.pageRanges
     });
 
     if (!argv.output) {
