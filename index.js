@@ -91,6 +91,10 @@ const argv = require('yargs')
             'viewport': {
                 describe: 'Set viewport to a given size, e.g. 800x600',
                 type: 'string'
+            },
+            'emulate': {
+                describe: 'Emulate a known device from puppeteers KnownDevices list, e.g. "iPhone 15 Pro"',
+                type: 'string'
             }
         },
         handler: async argv => {
@@ -186,6 +190,15 @@ async function screenshot(argv) {
     if (argv.cookie) {
         console.error(`Setting cookies`);
         await page.setCookie(...buildCookies(argv));
+    }
+
+    if (argv.emulate) {
+        const device = puppeteer.KnownDevices[argv.emulate];
+        if (device === undefined) {
+            console.error('Option --emulate must reference a KnownDevice from puppeteer');
+            process.exit(1);
+        }
+        await page.emulate(device);
     }
 
     console.error(`Loading ${url}`);
