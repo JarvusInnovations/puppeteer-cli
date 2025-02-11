@@ -151,7 +151,8 @@ async function print(argv) {
         },
         displayHeaderFooter: argv.displayHeaderFooter,
         headerTemplate: argv.headerTemplate,
-        footerTemplate: argv.footerTemplate
+        footerTemplate: argv.footerTemplate,
+        timeout: argv.timeout
     });
 
     if (!argv.output) {
